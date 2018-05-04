@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "redcarpet"
 require "rouge/plugins/redcarpet"
 require "nokogiri"
@@ -12,13 +14,14 @@ module Homeland
         fenced_code_blocks: true,
         strikethrough: true,
         underline: true,
-        superscript: true,
+        superscript: false,
+        footnotes: false,
+        highlight: false,
         tables: true,
-        footnotes: true,
         lax_spacing: true,
         space_after_headers: true,
         disable_indented_code_blocks: true,
-        no_intra_emphasis: true
+        no_intra_emphasis: true,
       }
 
       def call
@@ -38,7 +41,7 @@ module Homeland
         end
 
         def block_code(code, lang)
-          lang.downcase! if lang.is_a?(String)
+          lang = lang.downcase if lang.is_a?(String)
           code = code.strip_heredoc
           super(code, lang)
         end
@@ -58,6 +61,7 @@ module Homeland
         # ![](foo.jpg =300x200)
         # Example: https://gist.github.com/uupaa/f77d2bcf4dc7a294d109
         def image(link, title, alt_text)
+          link ||= ""
           links = link.split(" ")
           link = links[0]
           if links.count > 1
@@ -87,7 +91,7 @@ module Homeland
               # 防止 C 的 autolink 出来的内容有编码错误，万一有就直接跳过转换
               # 比如这句: 此版本并非线上的http://yavaeye.com的源码.
               link.match(/.+?/)
-            rescue
+            rescue StandardError
               return link
             end
             # Fix Chinese neer the URL
@@ -96,7 +100,7 @@ module Homeland
             %(<a href="#{link}" rel="nofollow" target="_blank">#{link}</a>#{bad_text})
           end
         end
-      end # end RenderHTML
+      end
     end
   end
 end

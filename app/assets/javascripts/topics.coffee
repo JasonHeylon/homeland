@@ -10,7 +10,7 @@ window.TopicView = Backbone.View.extend
 
   events:
     "click .navbar .topic-title": "scrollPage"
-    "click #replies .reply .btn-reply": "reply"
+    "click .reply .btn-reply": "reply"
     "click a.at_floor": "clickAtFloor"
     "click a.follow": "follow"
     "click a.bookmark": "bookmark"
@@ -105,9 +105,9 @@ window.TopicView = Backbone.View.extend
       $("abbr.timeago",$("#replies .total")).timeago()
       $("#new_reply textarea").val('')
       $("#preview").text('')
-      App.notice(msg,'#reply')
+      App.notice(msg, '#reply')
     else
-      App.alert(msg,'#reply')
+      App.alert(msg, '#reply')
     $("#new_reply textarea").focus()
     $('#reply-button').button('reset')
     @resetClearReplyHightTimer()
@@ -150,19 +150,17 @@ window.TopicView = Backbone.View.extend
     $(textarea).after preview_box
     preview_box.hide()
 
-    $(".edit a",switcher).click ->
-      $(".preview",switcher).removeClass("active")
-      $(this).parent().addClass("active")
-      $(preview_box).hide()
-      $(textarea).show()
-      return false
-
-    $(".preview a",switcher).click ->
-      $(".edit",switcher).removeClass("active")
-      $(this).parent().addClass("active")
-      $(preview_box).show()
-      $(textarea).hide()
-      self.preview($(textarea).val())
+    $(".preview",switcher).click ->
+      if $(this).hasClass("active")
+        $(this).removeClass("active")
+        $(preview_box).hide()
+        $(textarea).show()
+      else
+        $(this).addClass("active")
+        $(preview_box).show()
+        $(textarea).hide()
+        $(preview_box).css("height", $(textarea).height())
+        self.preview($(textarea).val())
       return false
 
   initCloseWarning: () ->
@@ -299,10 +297,11 @@ window.TopicView = Backbone.View.extend
   nodeSelectorNodeSelected: (e) ->
     el = $(e.currentTarget)
     $("#node-selector").modal('hide')
-    if $('.form input[name="topic[node_id]"]').length > 0
+    $('form input[name="topic[title]"]').focus()
+    if $('form input[name="topic[node_id]"]').length > 0
       e.preventDefault()
       nodeId = el.data('id')
-      $('.form input[name="topic[node_id]"]').val(nodeId)
+      $('form input[name="topic[node_id]"]').val(nodeId)
       $('#node-selector-button').html(el.text())
       return false
     else

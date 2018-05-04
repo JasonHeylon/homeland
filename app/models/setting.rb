@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # RailsSettings Model
 class Setting < RailsSettings::Base
   source Rails.root.join("config/config.yml")
@@ -6,7 +8,7 @@ class Setting < RailsSettings::Base
   SEPARATOR_REGEXP = /[\s,]/
 
   # keys that allow update in admin
-  KEYS_IN_ADMIN = %w(
+  KEYS_IN_ADMIN = %w[
     custom_head_html
     navbar_html
     navbar_brand_html
@@ -28,7 +30,9 @@ class Setting < RailsSettings::Base
     blacklist_ips
     admin_emails
     ban_reasons
-  )
+    topic_create_limit_interval
+    topic_create_hour_limit_count
+  ]
 
   class << self
     def protocol
@@ -69,6 +73,10 @@ class Setting < RailsSettings::Base
 
     def sso_provider_enabled?
       self.sso["enable_provider"] == true
+    end
+
+    def topic_create_rate_limit?
+      self.topic_create_rate_limit == "true"
     end
   end
 end

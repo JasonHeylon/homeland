@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 # Auto generate with notifications gem.
 class Notification < ActiveRecord::Base
-  self.table_name = "new_notifications"
-
   include Notifications::Model
 
   after_create :realtime_push_to_client
